@@ -13,9 +13,43 @@ const _schema = i.schema({
       imageURL: i.string().optional(),
       type: i.string().optional(),
     }),
-    todos: i.entity({
+    appointments: i.entity({
+      title: i.string(),
+      doctorName: i.string(),
+      specialty: i.string(),
+      status: i.string(),
+      date: i.number(),
+      summary: i.string(),
+      translationEs: i.string().optional(),
+      transcript: i.string(),
+      createdAt: i.number(),
+    }),
+    medications: i.entity({
+      name: i.string(),
+      dosage: i.string(),
+      frequency: i.string(),
+      instructions: i.string().optional(),
+      status: i.string().optional(),
+      createdAt: i.number(),
+    }),
+    transcripts: i.entity({
+      appointmentId: i.string().optional(),
       text: i.string(),
-      done: i.boolean(),
+      language: i.string().optional(),
+      createdAt: i.number(),
+    }),
+    reminders: i.entity({
+      type: i.string(),
+      message: i.string(),
+      dueAt: i.number(),
+      status: i.string().optional(),
+      createdAt: i.number(),
+    }),
+    contactMessages: i.entity({
+      name: i.string(),
+      email: i.string(),
+      company: i.string().optional(),
+      message: i.string(),
       createdAt: i.number(),
     }),
   },
@@ -32,11 +66,6 @@ const _schema = i.schema({
         has: "many",
         label: "linkedGuestUsers",
       },
-    },
-  },
-  rooms: {
-    todos: {
-      presence: i.entity({}),
     },
   },
 });
