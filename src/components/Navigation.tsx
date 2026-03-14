@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState } from 'react';
 
 export default function Navigation() {
@@ -13,10 +14,8 @@ export default function Navigation() {
           {/* Logo/Brand */}
           <div className="flex items-center">
             <Link href="/" className="text-2xl font-bold flex items-center gap-2">
-              <div className="bg-white text-blue-600 rounded-full w-10 h-10 flex items-center justify-center font-bold">
-                ℏ
-              </div>
-              <span>HealthAI</span>
+              <Image src="/HealthGuard.png" alt="HealthGuard Logo" width={40} height={40} />
+              <span>HealthGuard</span>
             </Link>
           </div>
 
@@ -24,6 +23,9 @@ export default function Navigation() {
           <div className="hidden md:flex items-center gap-8">
             <Link href="/" className="hover:text-blue-200 transition">Home</Link>
             <Link href="/how-it-works" className="hover:text-blue-200 transition">How It Works</Link>
+            <Link href="/appointments" className="hover:text-blue-200 transition">Appointments</Link>
+            <Link href="/renewals" className="hover:text-blue-200 transition">Renewals</Link>
+            <Link href="/recording" className="hover:text-blue-200 transition">Recording</Link>
             <Link href="/pricing" className="hover:text-blue-200 transition">Pricing</Link>
             <Link href="/faq" className="hover:text-blue-200 transition">FAQ</Link>
             <Link href="/contact" className="hover:text-blue-200 transition">Contact</Link>
@@ -47,6 +49,9 @@ export default function Navigation() {
           <div className="md:hidden pb-4 space-y-2">
             <Link href="/" className="block px-4 py-2 rounded hover:bg-blue-700 transition">Home</Link>
             <Link href="/how-it-works" className="block px-4 py-2 rounded hover:bg-blue-700 transition">How It Works</Link>
+            <Link href="/appointments" className="block px-4 py-2 rounded hover:bg-blue-700 transition">Appointments</Link>
+            <Link href="/renewals" className="block px-4 py-2 rounded hover:bg-blue-700 transition">Renewals</Link>
+            <Link href="/recording" className="block px-4 py-2 rounded hover:bg-blue-700 transition">Recording</Link>
             <Link href="/pricing" className="block px-4 py-2 rounded hover:bg-blue-700 transition">Pricing</Link>
             <Link href="/faq" className="block px-4 py-2 rounded hover:bg-blue-700 transition">FAQ</Link>
             <Link href="/contact" className="block px-4 py-2 rounded hover:bg-blue-700 transition">Contact</Link>

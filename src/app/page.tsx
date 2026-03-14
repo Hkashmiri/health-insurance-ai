@@ -1,56 +1,169 @@
-import Navigation from '@/components/Navigation';
-import Footer from '@/components/Footer';
-import ClaimFiler from '@/components/ClaimFiler';
-import InsuranceComparator from '@/components/InsuranceComparator';
-import CostCalculator from '@/components/CostCalculator';
-import Link from 'next/link';
+"use client";
 
-export default function Home() {
+import { db } from "@/lib/db";
+import { type AppSchema } from "@/instant.schema";
+import { id, InstaQLEntity } from "@instantdb/react";
+
+type Todo = InstaQLEntity<AppSchema, "todos">;
+
+const room = db.room("todos");
+
+function App() {
+  // Read Data
+  const { isLoading, error, data } = db.useQuery({ todos: {} });
+  const { peers } = db.rooms.usePresence(room);
+  const numUsers = 1 + Object.keys(peers).length;
+  if (isLoading) {
+    return;
+  }
+  if (error) {
+    return <div className="text-red-500 p-4">Error: {error.message}</div>;
+  }
+  const { todos } = data;
   return (
-    <>
-      <Navigation />
-      
-      {/* Hero Section */}
-      <div className="bg-gradient-to-b from-blue-600 to-blue-800 text-white py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h1 className="text-5xl md:text-6xl font-bold mb-6">
-              Smart Health Insurance Made Simple
-            </h1>
-            <p className="text-xl md:text-2xl mb-8 opacity-90">
-              File claims with AI, compare plans instantly, and calculate real costs
-            </p>
-            <Link href="/how-it-works" className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
-              Learn More
-            </Link>
-          </div>
-        </div>
+    <div className="font-mono min-h-screen flex justify-center items-center flex-col space-y-4">
+      <div className="text-xs text-gray-500">
+        Number of users online: {numUsers}
       </div>
-
-      {/* Features Section */}
-      <div className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center mb-12 text-black">Our Features</h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            <ClaimFiler />
-            <CostCalculator />
-            <InsuranceComparator />
-          </div>
-        </div>
+      <h2 className="tracking-wide text-5xl text-gray-300">todos</h2>
+      <div className="border border-gray-300 max-w-xs w-full">
+        <TodoForm todos={todos} />
+        <TodoList todos={todos} />
+        <ActionBar todos={todos} />
       </div>
-
-      {/* CTA Section */}
-      <div className="bg-blue-600 text-white py-16">
-        <div className="max-w-4xl mx-auto text-center px-4">
-          <h2 className="text-4xl font-bold mb-4">Ready to get started?</h2>
-          <p className="text-xl mb-8">Take control of your health insurance today.</p>
-          <Link href="/contact" className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
-            Contact Us
-          </Link>
-        </div>
+      <div className="text-xs text-center">
+        Open another tab to see todos update in realtime!
       </div>
-
-      <Footer />
-    </>
+    </div>
   );
 }
+
+// Write Data
+// ---------
+function addTodo(text: string) {
+  db.transact(
+    db.tx.todos[id()].update({
+      text,
+      done: false,
+      createdAt: Date.now(),
+    }),
+  );
+}
+
+function deleteTodo(todo: Todo) {
+  db.transact(db.tx.todos[todo.id].delete());
+}
+
+function toggleDone(todo: Todo) {
+  db.transact(db.tx.todos[todo.id].update({ done: !todo.done }));
+}
+
+function deleteCompleted(todos: Todo[]) {
+  const completed = todos.filter((todo) => todo.done);
+  const txs = completed.map((todo) => db.tx.todos[todo.id].delete());
+  db.transact(txs);
+}
+
+function toggleAll(todos: Todo[]) {
+  const newVal = !todos.every((todo) => todo.done);
+  db.transact(
+    todos.map((todo) => db.tx.todos[todo.id].update({ done: newVal })),
+  );
+}
+
+// Components
+// ----------
+function ChevronDownIcon() {
+  return (
+    <svg viewBox="0 0 20 20">
+      <path
+        d="M5 8 L10 13 L15 8"
+        stroke="currentColor"
+        fill="none"
+        strokeWidth="2"
+      />
+    </svg>
+  );
+}
+
+function TodoForm({ todos }: { todos: Todo[] }) {
+  return (
+    <div className="flex items-center h-10 border-b border-gray-300">
+      <button
+        className="h-full px-2 border-r border-gray-300 flex items-center justify-center"
+        onClick={() => toggleAll(todos)}
+      >
+        <div className="w-5 h-5">
+          <ChevronDownIcon />
+        </div>
+      </button>
+      <form
+        className="flex-1 h-full"
+        onSubmit={(e) => {
+          e.preventDefault();
+          const input = e.currentTarget.input as HTMLInputElement;
+          addTodo(input.value);
+          input.value = "";
+        }}
+      >
+        <input
+          className="w-full h-full px-2 outline-none bg-transparent"
+          autoFocus
+          placeholder="What needs to be done?"
+          type="text"
+          name="input"
+        />
+      </form>
+    </div>
+  );
+}
+
+function TodoList({ todos }: { todos: Todo[] }) {
+  return (
+    <div className="divide-y divide-gray-300">
+      {todos.map((todo) => (
+        <div key={todo.id} className="flex items-center h-10">
+          <div className="h-full px-2 flex items-center justify-center">
+            <div className="w-5 h-5 flex items-center justify-center">
+              <input
+                type="checkbox"
+                className="cursor-pointer"
+                checked={todo.done}
+                onChange={() => toggleDone(todo)}
+              />
+            </div>
+          </div>
+          <div className="flex-1 px-2 overflow-hidden flex items-center">
+            {todo.done ? (
+              <span className="line-through">{todo.text}</span>
+            ) : (
+              <span>{todo.text}</span>
+            )}
+          </div>
+          <button
+            className="h-full px-2 flex items-center justify-center text-gray-300 hover:text-gray-500"
+            onClick={() => deleteTodo(todo)}
+          >
+            X
+          </button>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function ActionBar({ todos }: { todos: Todo[] }) {
+  return (
+    <div className="flex justify-between items-center h-10 px-2 text-xs border-t border-gray-300">
+      <div>Remaining todos: {todos.filter((todo) => !todo.done).length}</div>
+      <button
+        className=" text-gray-300 hover:text-gray-500"
+        onClick={() => deleteCompleted(todos)}
+      >
+        Delete Completed
+      </button>
+    </div>
+  );
+}
+
+export default App;

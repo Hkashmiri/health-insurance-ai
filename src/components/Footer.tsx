@@ -18,6 +18,9 @@ export default function Footer() {
             <h4 className="text-white font-semibold mb-4">Product</h4>
             <ul className="space-y-2 text-sm">
               <li><a href="/how-it-works" className="hover:text-white transition">How It Works</a></li>
+              <li><a href="/appointments" className="hover:text-white transition">Appointments</a></li>
+              <li><a href="/renewals" className="hover:text-white transition">Medication Renewals</a></li>
+              <li><a href="/recording" className="hover:text-white transition">Appointment Recording</a></li>
               <li><a href="/pricing" className="hover:text-white transition">Pricing</a></li>
               <li><a href="/faq" className="hover:text-white transition">FAQ</a></li>
             </ul>
@@ -27,9 +30,9 @@ export default function Footer() {
           <div>
             <h4 className="text-white font-semibold mb-4">Support</h4>
             <ul className="space-y-2 text-sm">
-              <li><a href="/contact" className="hover:text-white transition">Contact Us</a></li>
-              <li><a href="#" className="hover:text-white transition">Privacy Policy</a></li>
-              <li><a href="#" className="hover:text-white transition">Terms of Service</a></li>
+              <li><a href="/support" className="hover:text-white transition">Support</a></li>
+              <li><a href="/privacy-policy" className="hover:text-white transition">Privacy Policy</a></li>
+              <li><a href="/terms-of-service" className="hover:text-white transition">Terms of Service</a></li>
             </ul>
           </div>
 
@@ -37,8 +40,8 @@ export default function Footer() {
           <div>
             <h4 className="text-white font-semibold mb-4">Contact</h4>
             <ul className="space-y-2 text-sm">
-              <li>Email: <a href="mailto:info@healthai.com" className="hover:text-white transition">info@healthai.com</a></li>
-              <li>Phone: <a href="tel:1-800-HEALTH" className="hover:text-white transition">1-800-HEALTH</a></li>
+              <li>Email: <a href="mailto:healthguardpwa@gmail.com" className="hover:text-white transition">healthguardpwa@gmail.com</a></li>
+              <li>Phone: <a href="tel:+18336641029" className="hover:text-white transition">+1 (833) 664-1029</a></li>
             </ul>
           </div>
         </div>
